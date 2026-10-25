@@ -1,112 +1,65 @@
-"""Check the actual generated page and archive, without external dependencies."""
-from __future__ import annotations
-
+"""Check the current archive, built files, and relative asset paths."""
 from html.parser import HTMLParser
+from urllib.parse import urljoin, urlparse
 import json
-from pathlib import Path
-import shutil
-import subprocess
-import sys
-import tempfile
-from urllib.parse import unquote, urlparse, urljoin
-
-from build import ROOT, DIST, read_archive
+from build import ROOT, DIST, load, source_files, create_version
 
 
 class Page(HTMLParser):
     def __init__(self):
         super().__init__()
         self.ids = []
-        self.links = []
-        self.sections = []
-        self.headings = []
-        self.scripts = 0
-        self.viewport = False
-        self.language = False
+        self.assets = []
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if "id" in attrs:
-            self.ids.append(attrs["id"])
-        if "href" in attrs:
-            self.links.append(attrs["href"])
-        if tag == "section":
-            self.sections.append(attrs.get("id"))
-        if tag == "script":
-            self.scripts += 1
-        if tag == "meta" and attrs.get("name") == "viewport":
-            self.viewport = "width=device-width" in attrs.get("content", "")
-        if tag == "html":
-            self.language = attrs.get("lang") == "zh-CN"
+        if 'id' in attrs:
+            self.ids.append(attrs['id'])
+        if tag == 'script' and attrs.get('src'):
+            self.assets.append(attrs['src'])
+        if tag == 'link' and attrs.get('rel') == 'stylesheet':
+            self.assets.append(attrs['href'])
 
 
 def check():
-    scope, plan, sources, checkpoints, _ = read_archive()
-    raw = (DIST / "index.html").read_text(encoding="utf-8")
+    catalog = load(ROOT / 'learning/scopes.json')
+    assert catalog['active_scope'] in {scope['id'] for scope in catalog['scopes']}
+    topic_count = 0
+    note_count = 0
+    for scope in catalog['scopes']:
+        base = ROOT / 'learning' / scope['path']
+        plan = load(base / 'path.json')
+        topics = [topic for stage in plan['stages'] for topic in stage['topics']]
+        topic_ids = {topic['id'] for topic in topics}
+        stage_ids = {stage['id'] for stage in plan['stages']}
+        assert len(topic_ids) == len(topics) and len(stage_ids) == len(plan['stages'])
+        assert plan['current_topic'] is None or plan['current_topic'] in topic_ids
+        targets = {'scope': {scope['id']}, 'stage': stage_ids, 'topic': topic_ids}
+        notes = load(base / 'notes/index.json')['notes']
+        keys = {(note['level'], note['target_id']) for note in notes}
+        assert len(keys) == len(notes)
+        for note in notes:
+            assert note['target_id'] in targets[note['level']]
+            assert (base / 'notes' / note['file']).is_file()
+        assert {note['target_id'] for note in notes if note['level'] == 'topic'} == {topic['id'] for topic in topics if topic['status'] == 'completed'}
+        topic_count += len(topics)
+        note_count += len(notes)
+    for path in source_files():
+        relative = path.relative_to(ROOT)
+        destination = DIST / (relative.relative_to('web') if relative.parts[0] == 'web' else relative)
+        assert destination.read_bytes() == path.read_bytes(), str(relative)
     page = Page()
-    page.feed(raw)
-    assert page.sections == ["now", "plan", "footprints"], page.sections
-    assert len(page.ids) == len(set(page.ids)), "Duplicate HTML ids"
-    assert page.viewport and page.language and page.scripts == 0
-    for link in page.links:
-        parsed = urlparse(link)
-        if not parsed.scheme and parsed.path:
-            assert not parsed.path.startswith("/"), "Root-relative URLs break project Pages"
-            assert urlparse(urljoin("https://example.invalid/StudyScope/", link)).path.startswith("/StudyScope/")
-        if parsed.scheme:
-            assert parsed.scheme == "https" and parsed.netloc
-        elif parsed.path:
-            path = (DIST / unquote(parsed.path)).resolve()
-            assert DIST.resolve() in path.parents and path.is_file(), link
-        elif parsed.fragment:
-            assert parsed.fragment in page.ids, link
-    for path in (ROOT / "learning").rglob("*"):
-        if path.is_file():
-            copy = DIST / "archive" / path.relative_to(ROOT / "learning")
-            assert copy.read_bytes() == path.read_bytes(), str(path)
-    assert raw.count('class="checkpoint"') == len(checkpoints)
-    from html import escape
-    for _, cp in checkpoints:
-        assert escape(cp["title"], quote=True) in raw
-        assert escape(cp["next_step"], quote=True) in raw
-    version = json.loads((DIST / "version.json").read_text(encoding="utf-8"))
-    assert version["source_digest"][:12] in raw
-    assert version["updated_at"] in raw
-    assert '@media(max-width:760px)' in (DIST / "style.css").read_text(encoding="utf-8")
-    assert not list(DIST.rglob(".git")), "Git metadata must not be published"
-    print(json.dumps({"passed": True, "sections": page.sections, "checkpoints": len(checkpoints), "sources": len(sources), "links": len(page.links), "commit": version["commit"]}))
+    page.feed((DIST / 'index.html').read_text(encoding='utf-8'))
+    assert len(page.ids) == len(set(page.ids))
+    for asset in page.assets:
+        assert not urlparse(asset).scheme and not asset.startswith('/')
+        assert (DIST / asset).is_file()
+        assert urlparse(urljoin('https://example.invalid/StudyScope/', asset)).path.startswith('/StudyScope/')
+    assert (DIST / 'notes.js').is_file()
+    version = load(DIST / 'version.json')
+    assert version['content_version'] == create_version()['content_version']
+    print(json.dumps({'passed': True, 'scopes': len(catalog['scopes']), 'topics': topic_count, 'notes': note_count, 'version': version['content_version'][:12]}))
 
 
-def exercise_update():
-    # All fixture edits happen in a new OS temporary directory, never in the learning archive.
-    with tempfile.TemporaryDirectory(prefix="studyscope-flow-") as temporary:
-        fixture = Path(temporary).resolve()
-        assert Path(tempfile.gettempdir()).resolve() in fixture.parents
-        for directory in ("learning", "web", "scripts"):
-            shutil.copytree(ROOT / directory, fixture / directory, ignore=shutil.ignore_patterns("__pycache__"))
-        catalog = json.loads((fixture / "learning/scopes.json").read_text(encoding="utf-8"))
-        active = next(s for s in catalog["scopes"] if s["id"] == catalog["active_scope"])
-        cp_path = sorted((fixture / "learning" / active["path"] / "checkpoints").glob("*.json"))[-1]
-        cp = json.loads(cp_path.read_text(encoding="utf-8"))
-        cp["title"] = "UPDATE_FLOW_FIXTURE_ONLY"
-        cp["next_step"] = "NEXT_STEP_FIXTURE_ONLY"
-        cp_path.write_text(json.dumps(cp, ensure_ascii=False), encoding="utf-8")
-        command = [sys.executable, str(fixture / "scripts/build.py")]
-        subprocess.run(command, check=True, capture_output=True)
-        output = (fixture / "dist/index.html").read_text(encoding="utf-8")
-        assert cp["title"] in output and cp["next_step"] in output
-        assert cp_path.read_bytes() == (fixture / "dist/archive" / cp_path.relative_to(fixture / "learning")).read_bytes()
-        first = json.loads((fixture / "dist/version.json").read_text(encoding="utf-8"))["source_digest"]
-        cp["next_step"] = "REVISED_STEP_FIXTURE_ONLY"
-        cp_path.write_text(json.dumps(cp, ensure_ascii=False), encoding="utf-8")
-        subprocess.run(command, check=True, capture_output=True)
-        output = (fixture / "dist/index.html").read_text(encoding="utf-8")
-        assert cp["next_step"] in output and "NEXT_STEP_FIXTURE_ONLY" not in output
-        assert first != json.loads((fixture / "dist/version.json").read_text(encoding="utf-8"))["source_digest"]
-    print(json.dumps({"document_update_to_page": "passed", "rebuild_replaces_previous_text": True, "real_archive_unchanged": True}))
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     check()
-    if "--flow" in sys.argv:
-        exercise_update()

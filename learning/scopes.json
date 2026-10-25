@@ -1,13 +1,14 @@
 {
-  "schema_version": 1,
-  "updated_at": "2026-10-25",
+  "updated_at": "2026-10-26",
   "active_scope": "ml-ai",
   "scopes": [
     {
       "id": "ml-ai",
-      "title": "机器学习 / AI Agent",
+      "title": "机器学习（Machine Learning）",
       "path": "scopes/ml-ai",
-      "description": "首个学习领域：理解并判断 ML 方案，逐步接近 CS329Z。"
+      "description": "首个学习领域：理解并判断 ML 方案，逐步接近 CS329Z。",
+      "label": "机器学习（Machine Learning）",
+      "short_label": "ML"
     }
   ]
 }

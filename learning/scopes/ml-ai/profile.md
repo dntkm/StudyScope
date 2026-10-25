@@ -27,3 +27,9 @@
 解释课程事实时回到原始官方材料。Google MLCC、Problem Framing、3Blue1Brown、StatQuest、Machine Learning Yearning、D2L 等都是按需的来源池，不是整套必修。引用链接与必要短摘要，不镜像教材或未经许可题库。
 
 计划、进度和整理后的学习记录可以公开。原始聊天、个人身份或联系方式、其他项目数据与内部助手笔记不进入公开项目。新会话通过同一仓库的约定、问题地图及最新 checkpoint 接续，不假设自动继承其他聊天上下文。
+
+## 下一阶段计划
+
+Stage 1 包含四个基础 Topic（学习机制、模型表达与架构、现实问题建模、评估诊断与泛化）。它们实际完成后，在当前机器学习 Scope 的 Stage 2 下把 CS329Z 按届时的官方课程资料展开为一系列 Topic，再逐项学习。不另建 Scope，也不提前编造课程 Topic 或完成记录。
+
+每个 Topic 完成后，整理一篇有价值的 Markdown Topic 笔记，并在本领域 `notes/index.json` 中以 `level: "topic"` 与 `target_id` 登记、把对应 Topic 标为 completed；保留可修订的理解证据、未解问题与必要来源。Scope 笔记和 Stage 笔记用于持续整理相应层级的联系，并不表示该层已经完成。页面只读取这些档案，不以点击或浏览次数判定完成。

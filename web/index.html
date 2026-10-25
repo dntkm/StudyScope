@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>StudyScope</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="layout" id="layout">
+    <aside class="sidebar" aria-label="侧边栏">
+      <div class="sidebar-header">
+        <span class="brand">Menu</span>
+        <button class="icon-button" id="toggle-sidebar" type="button" aria-label="收起侧边栏" title="收起侧边栏" aria-expanded="true" aria-controls="sidebar-content">
+          <svg class="icon" viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><path d="M7.5 3v14M12.5 7l-3 3 3 3"/></svg>
+        </button>
+      </div>
+      <div class="sidebar-content" id="sidebar-content">
+        <div class="scope-heading">Scope List</div>
+        <nav class="scope-list" id="scope-list" aria-label="选择 Scope"></nav>
+        <section class="sidebar-information" aria-labelledby="page-info-title">
+          <h2 id="page-info-title">页面信息</h2>
+          <dl class="page-info">
+            <dt>页面版本</dt><dd><code id="page-version"></code></dd>
+            <dt>运行环境</dt><dd id="run-mode"></dd>
+            <dt>内容更新</dt><dd id="content-updated"></dd>
+            <dt>源提交</dt><dd><code id="source-commit"></code></dd>
+          </dl>
+        </section>
+      </div>
+    </aside>
+    <button class="drawer-shade" id="drawer-shade" type="button" aria-label="关闭侧边栏" tabindex="-1"></button>
+    <main class="workspace">
+      <header class="workspace-header"><h1 id="scope-title"></h1></header>
+      <div class="content-tabs" role="tablist" aria-label="Scope 页面">
+        <button class="content-tab" id="path-tab" type="button" role="tab" aria-selected="true" aria-controls="path-panel">学习路径</button>
+        <button class="content-tab" id="notes-tab" type="button" role="tab" aria-selected="false" aria-controls="notes-panel" tabindex="-1">学习笔记</button>
+      </div>
+      <section class="path-panel" id="path-panel" role="tabpanel" aria-labelledby="path-tab">
+        <p class="load-error" id="load-error" role="alert" hidden></p>
+        <div class="graph" id="path-graph" role="group" aria-label="学习路径"></div>
+      </section>
+      <section class="notes-panel" id="notes-panel" role="tabpanel" aria-labelledby="notes-tab" hidden>
+        <p class="load-error" id="notes-error" role="alert" hidden></p>
+        <p class="notes-empty" id="notes-empty">暂无学习笔记。</p>
+        <div class="notes-layout" id="notes-layout" hidden>
+          <aside class="note-explorer" aria-label="笔记导航">
+            <div class="explorer-header">
+              <span class="explorer-title">笔记目录</span>
+              <button class="icon-button" id="toggle-notes" type="button" aria-label="收起笔记目录" title="收起笔记目录" aria-expanded="true" aria-controls="note-list">
+                <svg class="icon" viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><path d="M7.5 3v14M12.5 7l-3 3 3 3"/></svg>
+              </button>
+            </div>
+            <nav class="note-list" id="note-list" aria-label="笔记与子笔记"></nav>
+          </aside>
+          <article class="note-article" id="note-article">
+            <p class="note-context" id="note-context"></p>
+            <h2 id="note-title"></h2>
+            <time class="note-date" id="note-date"></time>
+            <div class="note-body" id="note-body"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

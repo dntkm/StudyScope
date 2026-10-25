@@ -23,7 +23,7 @@ jobs:
       - name: Build and validate
         run: |
           python scripts/build.py
-          python scripts/check.py --flow
+          python scripts/check.py
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

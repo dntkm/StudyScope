@@ -12,7 +12,7 @@ StudyScope 是对话式学习空间，可以逐步涵盖不同领域。专用家
 
 每次收尾展示短总结并接受纠正：解决的问题、理解证据（可修订观察，不是分数）、未解问题、一个下一步及必要来源。不能以自述兴趣、复述或连续答对次数推断掌握，也不能编造课堂记录。
 
-通用约定在本文件；当前领域索引在 `scopes.json`；每个领域分别保存 `profile.md`、`map.json`、`sources.json` 与 `checkpoints/`。新会话读取同一档案接续，不假设自动拥有其他聊天上下文。
+通用约定在本文件；当前领域索引在 `scopes.json`；每个领域分别保存 `profile.md`、`path.json`、`sources.json`、`notes/` 与 `checkpoints/`。计划采用 Scope → Stage → Topic 层级，`path.json` 是计划和进度的唯一来源。新会话读取同一档案接续，不假设自动拥有其他聊天上下文。
 
 ## 来源与公开范围
 

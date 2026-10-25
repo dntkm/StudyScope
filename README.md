@@ -1,66 +1,67 @@
 # StudyScope
 
-一次弄懂一个真想了解的问题。StudyScope 是可逐步涵盖不同领域的对话式学习档案；家教会话用于学习，网站只展示“现在 / 计划 / 足迹”。
+对话式学习档案。家教会话用于学习，页面用于查看学习路径与整理后的笔记。当前只有机器学习领域，尚未开始首次家教学习。
 
-当前仅有一个真实领域：**机器学习 / AI Agent**。只有这个领域以 CS329Z 为方向目标；以后其他领域可以有自己的目标和学习方式。
+## 结构
 
-仓库：[dntkm/StudyScope](https://github.com/dntkm/StudyScope)。Pages 的实际启用状态与步骤见 [PUBLISH.md](PUBLISH.md)，不要把仓库已上传误认为网页已上线。
-
-## 从这里接续
-
-依次读取：
-
-1. [通用学习约定](learning/agreement.md) 与 [当前领域索引](learning/scopes.json)。
-2. 索引 `active_scope` 所对应目录的 `profile.md`、`map.json` 与最新 `checkpoints/*.json`。
-
-当前为 [ML 领域画像](learning/scopes/ml-ai/profile.md)、[问题地图](learning/scopes/ml-ai/map.json) 与 [初始化记录](learning/scopes/ml-ai/checkpoints/2026-10-25-setup.json)。状态仍是：**目标与学习方式已对齐，待首次家教学习。**
-
-首个建议问题：**同一份数据，为什么不同损失会学到不同结果？** 可以随时换题。
-
-新会话可以直接说：
-
-> 请在 StudyScope 仓库中按 AGENTS.md 读取通用约定、领域索引和当前领域的画像、问题地图及最新 checkpoint，简短接续上次停留。不要假设拥有其他聊天上下文。
-
-## 日常更新
-
-一次真实教学结束后，先展示短总结并接受纠正，再在当前领域 `checkpoints/` 新增一份 JSON：
-
-```json
-{
-  "schema_version": 1,
-  "date": "YYYY-MM-DD",
-  "kind": "learning",
-  "title": "本次问题",
-  "resolved": ["今天实际解决的问题"],
-  "evidence": ["基于讨论的可修订观察，不是分数"],
-  "open_questions": ["尚未解决的问题"],
-  "next_step": "一个下一步",
-  "source_ids": ["本领域 sources.json 中的来源 id"],
-  "source_note": "必要的引用范围说明"
-}
+```text
+web/                       唯一正式页面：HTML、CSS、JavaScript
+learning/
+  agreement.md             通用学习约定
+  scopes.json              Scope 索引
+  scopes/ml-ai/
+    profile.md             本领域目标与学习画像
+    path.json              Stage / Topic、问题、实际进度与接续信息
+    sources.json           来源索引
+    notes/index.json       Scope / Stage / Topic 笔记索引
+    checkpoints/           每次学习的短记录
+scripts/
+  build.py                 构建正式静态页面
+  check.py                 检查档案关联、产物与资源路径
+  serve.py                 本地预览正式源码
+.github/workflows/pages.yml GitHub Pages 发布
+AGENTS.md                  项目全局原则与家教工作约定
+dist/                      构建产物，不提交
 ```
 
-同步更新该领域问题地图中的当前停留、一个下一步与更新时间；来源按需加入本领域 `sources.json`。切换领域时才改 `scopes.json`；用户真正提出新领域后再建立对应档案，不预生成课程。
+Python 3.10+，仅标准库；前端无第三方依赖。
+
+## 本地查看与构建
+
+```powershell
+python scripts/serve.py
+```
+
+打开 `http://127.0.0.1:8765/`。预览直接读取 `web/` 和真实 `learning/`，修改文件后刷新即可。它只在本机提供静态文件，没有写入接口。
 
 ```powershell
 python scripts/build.py
-python scripts/check.py --flow
+python scripts/check.py
 ```
 
-可双击 `dist/index.html` 查看本地预览，也可运行 `python -m http.server 8000 --directory dist --bind 127.0.0.1`。本地地址不是跨设备发布链接。
+构建把 `web/` 与 `learning/` 复制到 `dist/`，生成 `version.json`；页面信息显示内容版本、更新时间和源提交，提交号后 `*` 表示本地含未提交改动。资源使用相对路径，兼容 Pages 的 `/StudyScope/` 子路径。检查覆盖实际档案与笔记关联、复制后的文件和内容版本；页面交互仍需浏览器验证。
 
-使用 `main/docs` 分支静态发布时，更新档案后再运行：
+## 维护学习档案
 
-```powershell
-python scripts/build.py --docs
-python scripts/check.py --docs
-git add learning scripts web docs
-git commit -m "Update learning checkpoint"
-git push
-```
+固定层级为 **Scope → Stage → Topic**。磁盘按 Scope 分目录，Stage 和 Topic 在 `path.json` 中嵌套维护，不另建目录。阶段及主题数组的顺序直接决定路径和箭头；只保留这一份计划与进度。
 
-`docs/` 是生成产物，不手工修改。路径全部相对当前页面，兼容 GitHub Pages 的项目子路径 `/StudyScope/`，无需前端路由或脚本。
+- `stages[].topics[]`：Topic 标题、摘要、要理解的问题与实际状态（`not_started` / `in_progress` / `completed`）。
+- `current_topic`：当前 Topic 的 id；位置不代表掌握。
+- `resume`：当前问题、上次停留和一个下一步。
+- `notes/index.json`：每篇笔记的 `level`、`target_id`、`title`、`file`、`updated_at`；Markdown 文件与索引放在同一 `notes/` 目录。
 
-Python 3.10+，仅标准库，无第三方依赖。源内容指纹用于核对实际展示版本，`version.json` 同时记录构建时间和源提交；分支预构建的源提交与包含产物的发布提交可能不同。检查范围见 [VALIDATION.md](VALIDATION.md)。
+Scope 笔记包含 Stage 子笔记，Stage 笔记包含 Topic 子笔记。点击标题阅读，旁边箭头展开/收起子笔记；目录整栏也可收起。完成的 Topic 配一篇整理笔记，Scope / Stage 笔记可以边学边完善。当前真实笔记为空。
 
-公开内容仅限学习档案。原始聊天、私人信息、其他项目数据与内部助手笔记不入库。
+每次真实学习结束后，先展示短总结并接受纠正，再写一份 checkpoint：解决的问题、理解证据、未解问题、一个下一步和来源。同步更新路径；有价值的内容整理为笔记。不要把开发或部署当作学习进展。
+
+新会话从 `AGENTS.md`、通用约定、Scope 索引、当前画像/路径与最新 checkpoint 接续，不假设继承其他聊天上下文。
+
+## 发布与恢复
+
+目标仓库：[dntkm/StudyScope](https://github.com/dntkm/StudyScope)。Pages 使用已经配置的 **GitHub Actions**；推送到 `main` 会构建、检查并部署 `dist/`，不提交构建产物。
+
+发布后检查 Actions 的部署结果和线上 `version.json`，再确认页面导航、笔记、资源与版本一致。本地构建成功不等于线上已更新。
+
+旧版页面、旧构建脚本与 `docs/` 保留在 Git 历史（本轮清理前为 `90b5e0d`）；需要时从对应 commit 恢复，不在当前目录维护兼容版本。
+
+公开内容限于学习计划、进度和整理后的记录。原始聊天、私人信息、其他项目数据、内部助手笔记与凭据不入库。开发与维护遵循 **如无必要，勿增实体**，具体约定见 `AGENTS.md`。
