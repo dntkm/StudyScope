@@ -6,7 +6,7 @@
 
 文件上传成功后，打开该仓库 **Settings → Pages**：
 
-- 如果仓库已有可运行的 `Publish learning archive` 工作流，将 Source 设为 **GitHub Actions**，再在 Actions 中运行一次该工作流；以后 `main` 更新自动构建和发布。
+- `Publish learning archive` 工作流已成功写入。将 Source 设为 **GitHub Actions**，再在 Actions 中运行一次该工作流；以后 `main` 更新自动构建和发布。
 - 如果工作流写入不受支持，使用已构建并提交的 `docs/`：Source 选择 **Deploy from a branch**，Branch 选 **main**，目录选 **/docs**，点击 **Save**。以后提交更新后的 `docs/` 即可自动发布。
 
 这里只选择其中一条路线。此项目无需个人访问令牌、登录功能、数据库或其他托管平台。
@@ -21,7 +21,7 @@ Actions 构建的 `commit` 是实际 workflow head。`main/docs` 预构建中的
 
 ## 本地与远程历史
 
-首次本地项目的历史已保留。通过仓库内容 API 上传会产生独立的远程 Git 提交，不保证与本地提交号相同。接续时先保存本地历史分支 / bundle，再 fetch 远程分支；不要强推覆盖任一历史。
+首次本地项目的历史已保留。通过仓库内容 API 上传会产生独立的远程 Git 提交，不保证与本地提交号相同；分支预构建的源提交也可能来自已保存的本地历史。接续时先保存本地历史分支 / bundle，再 fetch 远程分支；不要强推覆盖任一历史。
 
 日常档案更新流程：领域文件 → Python 构建与检查 → 提交 / 内容 API 上传 → Pages 自动发布 → 对照线上版本。若使用 `main/docs`，必须一起上传更新后的 `docs/`；若使用 Actions，服务器会从源文件重新构建。
 

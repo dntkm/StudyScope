@@ -180,7 +180,7 @@ def build():
         "mode": "github-pages" if os.environ.get("GITHUB_ACTIONS") == "true" else ("branch-docs" if DIST.name == "docs" else "local"),
         "scope": scope["id"],
         "commit": sha,
-        "dirty": bool(git("status", "--porcelain")),
+        "dirty": bool(git("status", "--porcelain", "--", "learning", "web", "scripts")),
         "built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "updated_at": max([plan["updated_at"]] + [cp["date"] for _, cp in checkpoints]),
         "source_digest": digest.hexdigest(),
@@ -194,12 +194,12 @@ def build():
             raise ValueError("Refusing to replace an unrecognized or linked output directory")
         shutil.rmtree(DIST)
     DIST.mkdir()
-    (DIST / ".studyscope-generated").write_text("StudyScope build output\n", encoding="utf-8")
+    (DIST / ".studyscope-generated").write_text("StudyScope build output\n", encoding="utf-8", newline="\n")
     (DIST / ".nojekyll").touch()
     shutil.copytree(ROOT / "learning", DIST / "archive")
     shutil.copyfile(ROOT / "web/style.css", DIST / "style.css")
-    (DIST / "index.html").write_text(render(scope, plan, sources, checkpoints, source_map, version), encoding="utf-8")
-    (DIST / "version.json").write_text(json.dumps(version, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (DIST / "index.html").write_text(render(scope, plan, sources, checkpoints, source_map, version), encoding="utf-8", newline="\n")
+    (DIST / "version.json").write_text(json.dumps(version, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"output": str(DIST), "commit": sha, "checkpoints": len(checkpoints), "mode": version["mode"]}))
 
 

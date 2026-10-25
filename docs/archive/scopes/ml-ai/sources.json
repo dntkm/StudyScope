@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cs329z",
+    "title": "Stanford CS329Z · Engineering AI Agents",
+    "url": "https://cs329z.stanford.edu/",
+    "use": "方向目标；教学时按具体问题回到对应讲义或原始论文。",
+    "verified_at": "2026-10-25"
+  },
+  {
+    "id": "mlcc-loss",
+    "title": "Google MLCC · Linear regression: Loss",
+    "url": "https://developers.google.com/machine-learning/crash-course/linear-regression/loss",
+    "use": "首个问题的候选参考：损失如何衡量预测误差。未开始学习。",
+    "verified_at": "2026-10-25"
+  },
+  {
+    "id": "problem-framing",
+    "title": "Google · Machine Learning Problem Framing",
+    "url": "https://developers.google.com/machine-learning/problem-framing",
+    "use": "按需参考：界定任务、方案与成功标准。",
+    "verified_at": "2026-10-25"
+  },
+  {
+    "id": "mlcc",
+    "title": "Google · Machine Learning Crash Course",
+    "url": "https://developers.google.com/machine-learning/crash-course",
+    "use": "按需选择章节；不作为全套必修。",
+    "verified_at": "2026-10-25"
+  }
+]
