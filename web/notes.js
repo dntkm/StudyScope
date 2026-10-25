@@ -1,23 +1,35 @@
-// A small, safe Markdown subset; note text is never inserted as HTML.
+import katex from './vendor/katex/katex.mjs';
+
+function renderMath(tex, displayMode = false) {
+  const element = document.createElement(displayMode ? 'div' : 'span');
+  element.className = displayMode ? 'math-block' : 'math-inline';
+  katex.render(tex, element, { displayMode, throwOnError: false });
+  return element;
+}
+
+// A small Markdown subset; code stays literal and math is parsed before emphasis/links.
 function appendInline(parent, text, sourceUrl) {
-  const pattern = /`([^`]+)`|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^\s)]+)\)/g;
+  const pattern = /`([^`]+)`|(?<!\\)\$([^$\n]+?)(?<!\\)\$|\\\((.+?)\\\)|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^\s)]+)\)/g;
   let offset = 0;
   for (const match of text.matchAll(pattern)) {
     parent.append(document.createTextNode(text.slice(offset, match.index)));
-    if (match[1] != null || match[2] != null) {
+    if (match[2] != null || match[3] != null) {
+      parent.append(renderMath(match[2] ?? match[3]));
+    } else if (match[1] != null || match[4] != null) {
       const element = document.createElement(match[1] != null ? 'code' : 'strong');
-      element.textContent = match[1] ?? match[2];
+      if (match[1] != null) element.textContent = match[1];
+      else appendInline(element, match[4], sourceUrl);
       parent.append(element);
     } else {
       let url;
-      try { url = new URL(match[4], sourceUrl); } catch { url = null; }
+      try { url = new URL(match[6], sourceUrl); } catch { url = null; }
       if (url && ['http:', 'https:'].includes(url.protocol)) {
         const link = document.createElement('a');
         link.href = url.href;
-        link.textContent = match[3];
+        appendInline(link, match[5], sourceUrl);
         if (url.origin !== location.origin) { link.target = '_blank'; link.rel = 'noopener noreferrer'; }
         parent.append(link);
-      } else parent.append(document.createTextNode(match[3]));
+      } else parent.append(document.createTextNode(match[5]));
     }
     offset = match.index + match[0].length;
   }
@@ -29,12 +41,28 @@ function renderMarkdown(container, markdown, sourceUrl, title) {
   const output = document.createDocumentFragment();
   let i = 0;
   let firstContent = true;
-  const isBlock = line => /^(#{1,4})\s|^\s*```|^\s*[-*]\s|^\s*\d+\.\s|^>\s?/.test(line);
+  const isBlock = line => /^(#{1,4})\s|^\s*```|^\s*[-*]\s|^\s*\d+\.\s|^>\s?|^\s*(\$\$|\\\[)/.test(line);
   while (i < lines.length) {
     const line = lines[i];
     if (!line.trim()) { i++; continue; }
     const heading = line.match(/^(#{1,4})\s+(.+)$/);
-    if (heading) {
+    const display = line.match(/^\s*(\$\$|\\\[)(.*)$/);
+    if (display) {
+      const closing = display[1] === '$$' ? '$$' : '\\]';
+      const mathLines = [display[2]];
+      let end = i;
+      while (!mathLines.at(-1).trimEnd().endsWith(closing) && end + 1 < lines.length) mathLines.push(lines[++end]);
+      const math = mathLines.join('\n').trimEnd();
+      if (math.endsWith(closing)) {
+        output.append(renderMath(math.slice(0, -closing.length).trim(), true));
+        i = end + 1;
+      } else {
+        const paragraph = document.createElement('p');
+        paragraph.textContent = line;
+        output.append(paragraph);
+        i++;
+      }
+    } else if (heading) {
       if (!(firstContent && heading[1] === '#' && heading[2].trim() === title)) {
         const element = document.createElement('h' + Math.min(4, heading[1].length + 1));
         appendInline(element, heading[2], sourceUrl);

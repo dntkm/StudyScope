@@ -4,28 +4,28 @@
       "level": "scope",
       "target_id": "ml-ai",
       "title": "机器学习 / AI Agent · 领域概述",
-      "file": "ml-ai.md",
+      "file": "index.md",
       "updated_at": "2026-10-26"
     },
     {
       "level": "stage",
       "target_id": "foundations",
       "title": "机器学习基础 · 阶段概述",
-      "file": "foundations.md",
+      "file": "foundations/index.md",
       "updated_at": "2026-10-26"
     },
     {
       "level": "topic",
       "target_id": "network-basics",
       "title": "模型结构与前向计算",
-      "file": "network-basics.md",
+      "file": "foundations/network-basics.md",
       "updated_at": "2026-10-26"
     },
     {
       "level": "topic",
       "target_id": "learning",
       "title": "学习目标与训练机制",
-      "file": "learning.md",
+      "file": "foundations/learning.md",
       "updated_at": "2026-10-26"
     }
   ]

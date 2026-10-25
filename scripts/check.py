@@ -35,11 +35,17 @@ def check():
         assert len(topic_ids) == len(topics) and len(stage_ids) == len(plan['stages'])
         assert plan['current_topic'] is None or plan['current_topic'] in topic_ids
         targets = {'scope': {scope['id']}, 'stage': stage_ids, 'topic': topic_ids}
+        note_paths = {('scope', scope['id']): 'index.md'}
+        for stage in plan['stages']:
+            note_paths['stage', stage['id']] = stage['id'] + '/index.md'
+            for topic in stage['topics']:
+                note_paths['topic', topic['id']] = stage['id'] + '/' + topic['id'] + '.md'
         notes = load(base / 'notes/index.json')['notes']
         keys = {(note['level'], note['target_id']) for note in notes}
         assert len(keys) == len(notes)
         for note in notes:
             assert note['target_id'] in targets[note['level']]
+            assert note['file'] == note_paths[note['level'], note['target_id']], note['file']
             assert (base / 'notes' / note['file']).is_file()
         assert {topic['id'] for topic in topics if topic['status'] == 'completed'} <= {note['target_id'] for note in notes if note['level'] == 'topic'}
         topic_count += len(topics)
