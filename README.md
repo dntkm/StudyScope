@@ -1,6 +1,6 @@
 # StudyScope
 
-对话式学习档案。家教会话用于学习，页面用于查看学习路径与整理后的笔记。当前只有机器学习领域，尚未开始首次家教学习。
+对话式学习档案。家教会话用于学习，页面用于查看学习路径与整理后的笔记。当前只有机器学习领域，已开始家教学习；当前路线与接续位置见 `learning/scopes/ml-ai/path.json`。
 
 ## 结构
 
@@ -50,7 +50,7 @@ python scripts/check.py
 - `resume`：当前问题、上次停留和一个下一步。
 - `notes/index.json`：每篇笔记的 `level`、`target_id`、`title`、`file`、`updated_at`；Markdown 文件与索引放在同一 `notes/` 目录。
 
-Scope 笔记包含 Stage 子笔记，Stage 笔记包含 Topic 子笔记。点击标题阅读，旁边箭头展开/收起子笔记；目录整栏也可收起。完成的 Topic 配一篇整理笔记，Scope / Stage 笔记可以边学边完善。当前真实笔记为空。
+Scope 笔记包含 Stage 子笔记，Stage 笔记包含 Topic 子笔记。点击标题阅读，旁边箭头展开/收起子笔记；目录整栏也可收起。Scope 笔记简述领域，Stage 笔记概述阶段，具体知识总结放在各自的 Topic 笔记中。进行中的 Topic 也可以有笔记，已完成的 Topic 必须有笔记；笔记存在不代表完成。当前已登记 ML 领域、Stage 1、Topic 1 和 Topic 2 四篇笔记。
 
 每次真实学习结束后，先展示短总结并接受纠正，再写一份 checkpoint：解决的问题、理解证据、未解问题、一个下一步和来源。同步更新路径；有价值的内容整理为笔记。不要把开发或部署当作学习进展。
 

@@ -41,7 +41,7 @@ def check():
         for note in notes:
             assert note['target_id'] in targets[note['level']]
             assert (base / 'notes' / note['file']).is_file()
-        assert {note['target_id'] for note in notes if note['level'] == 'topic'} == {topic['id'] for topic in topics if topic['status'] == 'completed'}
+        assert {topic['id'] for topic in topics if topic['status'] == 'completed'} <= {note['target_id'] for note in notes if note['level'] == 'topic'}
         topic_count += len(topics)
         note_count += len(notes)
     for path in source_files():

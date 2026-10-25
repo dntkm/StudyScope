@@ -4,14 +4,14 @@
     "title": "Stanford CS329Z · Engineering AI Agents",
     "url": "https://cs329z.stanford.edu/",
     "use": "方向目标；教学时按具体问题回到对应讲义或原始论文。",
-    "verified_at": "2026-10-25"
+    "verified_at": "2026-10-26"
   },
   {
     "id": "mlcc-loss",
     "title": "Google MLCC · Linear regression: Loss",
     "url": "https://developers.google.com/machine-learning/crash-course/linear-regression/loss",
-    "use": "首个问题的候选参考：损失如何衡量预测误差。未开始学习。",
-    "verified_at": "2026-10-25"
+    "use": "已用于首次教学：绝对损失与平方损失怎样衡量误差、怎样影响大误差的代价；整理见学习目标与训练机制 Topic 笔记。",
+    "verified_at": "2026-10-26"
   },
   {
     "id": "problem-framing",
@@ -25,6 +25,69 @@
     "title": "Google · Machine Learning Crash Course",
     "url": "https://developers.google.com/machine-learning/crash-course",
     "use": "按需选择章节；不作为全套必修。",
-    "verified_at": "2026-10-25"
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "sklearn-regression-losses",
+    "title": "scikit-learn · Regression loss criteria",
+    "url": "https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html",
+    "use": "核对固定预测时均值与中位数分别最小化平方损失与绝对损失；本次只取该机制，不学习决策树 API。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "mlcc-gradient-descent",
+    "title": "Google MLCC · Linear regression: Gradient descent",
+    "url": "https://developers.google.com/machine-learning/crash-course/linear-regression/gradient-descent",
+    "use": "已用于解释损失斜率、梯度下降与学习率。多维局部方向、曲率和收敛条件按具体问题讨论。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "pytorch-autograd",
+    "title": "PyTorch · Automatic Differentiation with torch.autograd",
+    "url": "https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html",
+    "use": "已结合小网络解释输出层与通向第一层的单条链式求导、参数梯度和中间导数；整理见学习目标与训练机制 Topic 笔记，仍可在新例子中巩固。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "pytorch-optimization",
+    "title": "PyTorch · Optimizing Model Parameters",
+    "url": "https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html",
+    "use": "已用于前向、反向、参数更新的分工，以及同一参数状态下计算梯度、batch 与 step 的说明；不以记忆 API 为目标。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "mlcc-neural-networks",
+    "title": "Google MLCC · Neural networks: Nodes and hidden layers",
+    "url": "https://developers.google.com/machine-learning/crash-course/neural-networks/nodes-hidden-layers",
+    "use": "已用于解释单元、层、权重、隐藏层的位置含义，并展开两输入、三隐藏单元、一输出网络的前向示例。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "mlcc-activation-functions",
+    "title": "Google MLCC · Neural networks: Activation functions",
+    "url": "https://developers.google.com/machine-learning/crash-course/neural-networks/activation-functions",
+    "use": "已用于 ReLU、非线性表达、隐藏表示及输出取值范围的讨论；sigmoid、tanh 的具体性质与用途尚未展开。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "pytorch-sgd",
+    "title": "PyTorch · SGD and momentum",
+    "url": "https://docs.pytorch.org/docs/2.14/generated/torch.optim.SGD.html",
+    "use": "已用于普通 SGD 与动量的更新规则、历史累积及当前零梯度仍可能更新的例子；不涉及其他附加项。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "pytorch-adam",
+    "title": "PyTorch · Adam",
+    "url": "https://docs.pytorch.org/docs/2.14/generated/torch.optim.Adam.html",
+    "use": "下一次优化器讨论的候选参考：历史方向与梯度平方的尺度信息。已核对来源，尚未正式展开教学。",
+    "verified_at": "2026-10-26"
+  },
+  {
+    "id": "mlcc-backpropagation",
+    "title": "Google MLCC · Training using backpropagation",
+    "url": "https://developers.google.com/machine-learning/crash-course/neural-networks/backpropagation",
+    "use": "后续梯度特殊情况的候选参考：梯度消失、爆炸与 ReLU 梯度路径；具体机制和处理方法尚未展开。",
+    "verified_at": "2026-10-26"
   }
 ]

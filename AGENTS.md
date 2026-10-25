@@ -10,8 +10,10 @@
 
 - `web/` 是唯一正式页面源码；`learning/` 是真实学习档案；`scripts/` 只负责构建、检查与本地预览。`dist/` 是忽略的构建产物，通过现有 GitHub Actions 发布。
 - 固定层级为 **Scope → Stage → Topic**。Scope 是学习领域，一个 Scope 可有多个 Stage，每个 Stage 下可有多个 Topic。`learning/scopes.json` 登记 Scope，各 Scope 的 `path.json` 是计划与进度的唯一来源，使用 `stages[].topics[]` 维护层级；数组顺序就是学习路径顺序。
-- 当前只有机器学习 Scope。Stage 1 是四个基础 Topic；实际完成后，才依据届时官方课程资料在同一 Scope 的 Stage 2 中展开 CS329Z。其他领域在用户提出实际需要时再建立，不套用 ML 的目标和偏好。
-- 笔记分为 **Scope 笔记、Stage 笔记、Topic 笔记**。每个对象当前维护一篇可修订的 Markdown 笔记，在该 Scope 的 `notes/index.json` 中用 `level`（`scope` / `stage` / `topic`）、`target_id`、`file` 关联。完成的 Topic 配一篇整理笔记；Scope / Stage 笔记可随学习逐步完善，不意味着整个领域或阶段已完成。
+- 当前只有机器学习 Scope。Stage 1 的基础 Topic 与顺序以当前 Scope 的 `path.json` 为准；实际完成后，才依据届时官方课程资料在同一 Scope 的 Stage 2 中展开 CS329Z。其他领域在用户提出实际需要时再建立，不套用 ML 的目标和偏好。
+- 笔记分别对应 **Scope、Stage、Topic**，每个对象维护一篇可修订的 Markdown 笔记，在该 Scope 的 `notes/index.json` 中用 `level`（`scope` / `stage` / `topic`）、`target_id`、`file` 关联。Scope 笔记简述领域范围与学习目标；Stage 笔记简述阶段目标及其 Topic 之间的关系；Topic 笔记承载该主题的知识总结、符号、公式、例子与未解问题，不把多个 Topic 的详细内容汇总到 Scope 或 Stage 概述中。
+- Topic 进行中即可创建对应笔记并持续修订；已完成的 Topic 必须有整理笔记。笔记的存在不代表掌握或完成，进度仍按实际学习独立记录在 `path.json` 中。
+- 文档中的数学符号与公式尽量使用规范 LaTeX：行内公式用 `$...$`，独立公式用 `$$...$$`；矩阵、上下标、分式和偏导数使用相应 LaTeX 写法，避免用纯文本拼接或普通代码块模拟数学排版。实际程序代码、命令、路径和标识符仍使用代码格式。符号先解释含义，全文保持一致。
 
 ## 家教接续与归档
 
