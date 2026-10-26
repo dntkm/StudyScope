@@ -21,7 +21,10 @@ def git(*args):
 
 
 def source_files():
-    return sorted(p for directory in ['web', 'learning'] for p in (ROOT / directory).rglob('*') if p.is_file())
+    return sorted(
+        (p for directory in ['web', 'learning'] for p in (ROOT / directory).rglob('*') if p.is_file()),
+        key=lambda p: p.relative_to(ROOT).as_posix(),
+    )
 
 
 def create_version(mode=None):
